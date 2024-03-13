@@ -86,8 +86,8 @@ impl Config {
 
         println!("{:#?}", conf);
 
-		if conf.yt_api.is_none() {
-    		panic!("\nPlease have a youtube api key set in either\n\n{}\n\nor using the --yt-api flag.", conf.config_file())
+		if conf.yt_api.is_none() && conf.yt_oauth_token.is_none() {
+    		panic!("\nPlease have a youtube api key or an OAuth2.0 token set in either\n\n{}\n\nor using the --yt-api flag.", conf.config_file())
 		}
 
 		Ok(conf)

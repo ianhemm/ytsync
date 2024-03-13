@@ -1,15 +1,15 @@
 use reqwest::{self, Client};
-use std::error::Error;
 use tracing::info;
+use color_eyre::eyre::Error;
 
 use ytsync::{config::Config, Video};
 use youtube::{
     playlist::YoutubePlaylistPage,
-    RequestBuilder,
+    Youtube,
 };
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+async fn main() -> Result<(), Error> {
     /*
      * Initialization
      */
@@ -35,6 +35,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // Get list of playlists from a file
     const PLAYLIST_ID: &str = "PLbALbm1g5VzAqShkgKwo0NIVkwV9bZE8t"; // FIXME: test case that will represent the playlist we are wanting to pull videos from
 
+	let ytclient = Youtube::new()
+    	.with_api(
+        	config.youtube_api())
+        	.unwrap();
 
 	/*
      * Processing
@@ -43,7 +47,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     info!("Making a request to the first page of: {}", PLAYLIST_ID);
     let playlistitems_request = client
         .get(
-            RequestBuilder::playlist_items(config.youtube_api())
+            ytclient.playlist_items()
                 .max_items(50)
                 .playlist_id(PLAYLIST_ID)
                 .build())
@@ -69,7 +73,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         // theres always going to be at least one request
         let request = client
             .get(
-                RequestBuilder::playlist_items(config.youtube_api())
+                ytclient.playlist_items()
                     .max_items(50)
                     .playlist_id(PLAYLIST_ID)
                     .page_id(page_token)
