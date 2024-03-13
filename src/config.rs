@@ -3,6 +3,7 @@ use clap::{builder::OsStr, Parser};
 use clap_serde_derive::ClapSerde;
 use serde::Serialize;
 use toml;
+use tracing::info;
 
 ///
 /// # The configuration module.
@@ -57,6 +58,7 @@ pub struct Config {
 
 impl Config {
     pub fn build() -> Result<Config, Box<dyn Error>> {
+        info!("Loading configuration...");
         let conf = Config::parse();
 		let file = match File::open(conf.config_file()) {
             Ok(x) => Some(x),
@@ -73,18 +75,13 @@ impl Config {
         let conf;
         if let Some(mut file) = file {
             file.read_to_string(&mut buf)?;
-            println!("{}", &buf);
 
             conf = Config::from(
                 toml::from_str::<<Config as ClapSerde>::Opt>(&buf)?)
                 .merge_clap();
-
-            println!("{:#?}", conf);
         } else {
             conf = Config::parse();
         };
-
-        println!("{:#?}", conf);
 
 		if conf.yt_api.is_none() && conf.yt_oauth_token.is_none() {
     		panic!("\nPlease have a youtube api key or an OAuth2.0 token set in either\n\n{}\n\nor using the --yt-api flag.", conf.config_file())

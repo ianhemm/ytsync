@@ -13,12 +13,6 @@ async fn main() -> Result<(), Error> {
     /*
      * Initialization
      */
-
-    let config = match Config::build() {
-        Ok(x) => x,
-        Err(e) => panic!("Error in config creation: {}",e),
-    };
-
     // Logging system
     let subscriber = tracing_subscriber::fmt()
         .compact()
@@ -28,6 +22,12 @@ async fn main() -> Result<(), Error> {
         .with_target(false)
         .finish();
     tracing::subscriber::set_global_default(subscriber)?;
+
+    let config = match Config::build() {
+        Ok(x) => x,
+        Err(e) => panic!("Error in config creation: {}",e),
+    };
+
 
     // request client
     let client = Client::builder().build()?;
@@ -46,8 +46,7 @@ async fn main() -> Result<(), Error> {
     let mut playlist: Vec<Video> = Vec::new();
     info!("Making a request to the first page of: {}", PLAYLIST_ID);
     let playlistitems_request = client
-        .get(
-            ytclient.playlist_items()
+        .get(ytclient.playlist_items()
                 .max_items(50)
                 .playlist_id(PLAYLIST_ID)
                 .build())

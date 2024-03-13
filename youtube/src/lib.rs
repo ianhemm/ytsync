@@ -34,7 +34,7 @@ impl<T:Borrow<ApiAuth>> Authorized for T{
     }
 
     fn param_key(&self) -> &str {
-		"?key="
+		"&key="
     }
 }
 
@@ -44,7 +44,7 @@ impl Authorized for OAuth{
     }
 
 	fn param_key(&self) -> &str {
-    "?access_token="
+    "&access_token="
     }
 }
 
