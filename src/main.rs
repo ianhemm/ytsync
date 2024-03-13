@@ -1,13 +1,19 @@
-use clap::Parser;
 use reqwest::{self, Client};
 use std::error::Error;
 use tracing::info;
 
-use ytsync::{request::youtube::RequestBuilder, Config, YoutubePlaylistPage, Video};
+use ytsync::{request::youtube::RequestBuilder, config::Config, YoutubePlaylistPage, Video};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let config = Config::parse();
+    /*
+     * Initialization
+     */
+
+    let config = match Config::build() {
+        Ok(x) => x,
+        Err(e) => panic!("Error in config creation: {}",e),
+    };
 
     // Logging system
     let subscriber = tracing_subscriber::fmt()
@@ -26,13 +32,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
     const PLAYLIST_ID: &str = "PLbALbm1g5VzAqShkgKwo0NIVkwV9bZE8t"; // FIXME: test case that will represent the playlist we are wanting to pull videos from
 
 
+	/*
+     * Processing
+     */
     let mut playlist: Vec<Video> = Vec::new();
-
-    // theres always going to be at least one request
     info!("Making a request to the first page of: {}", PLAYLIST_ID);
     let playlistitems_request = client
         .get(
-            RequestBuilder::playlist_items(&config.yt_api)
+            RequestBuilder::playlist_items(config.youtube_api())
                 .max_items(50)
                 .playlist_id(PLAYLIST_ID)
                 .build())
@@ -60,7 +67,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         // theres always going to be at least one request
         let request = client
             .get(
-                RequestBuilder::playlist_items(&config.yt_api)
+                RequestBuilder::playlist_items(config.youtube_api())
                     .max_items(50)
                     .playlist_id(PLAYLIST_ID)
                     .page_id(page_token)
@@ -83,7 +90,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
         playlist.append(&mut links_page);
     }
 
-	// Output to a file
+	/*
+     * Output
+     */
     println!("{:#?}", &playlist);
 
     Ok(())

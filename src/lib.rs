@@ -1,8 +1,7 @@
 pub mod request;
+pub mod config;
 
-use clap::Parser;
 use serde::{Deserialize, Serialize};
-
 
 /**
  * The user facing struct that represents a video
@@ -38,28 +37,18 @@ impl Video {
         self.author = Some(author.to_string());
     }
 
-    pub fn url(&self) -> String {
-        self.url.clone()
+    pub fn url(&self) -> &String {
+        &self.url
     }
-    pub fn title(&self) -> Option<String> {
-        self.title.clone()
+    pub fn title(&self) -> Option<&String> {
+        self.title.as_ref()
     }
-    pub fn description(&self) -> Option<String> {
-        self.description.clone()
+    pub fn description(&self) -> Option<&String> {
+        self.description.as_ref()
     }
-    pub fn author(&self) -> Option<String> {
-        self.author.clone()
+    pub fn author(&self) -> Option<&String> {
+        self.author.as_ref()
     }
-}
-
-/**
- * Command line and file configuration
- */
-#[derive(Parser, Debug)]
-pub struct Config {
-    //A youtube API key
-    #[arg(long)]
-    pub yt_api: String,
 }
 
 /*
@@ -101,7 +90,7 @@ impl YoutubePlaylistItem {
         video.set_description(&self.snippet.description);
         video.set_title(&self.snippet.title);
         if let Some(ref author) = self.snippet.video_owner_channel_title {
-            video.set_author(&author);
+            video.set_author(author);
         }
 
         video
