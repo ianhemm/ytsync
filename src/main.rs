@@ -2,7 +2,11 @@ use reqwest::{self, Client};
 use std::error::Error;
 use tracing::info;
 
-use ytsync::{request::youtube::RequestBuilder, config::Config, YoutubePlaylistPage, Video};
+use ytsync::{config::Config, Video};
+use youtube::{
+    playlist::YoutubePlaylistPage,
+    RequestBuilder,
+};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -55,9 +59,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let mut links_page: Vec<Video> = page
         .items
         .into_iter()
-        .map(|x| {
-            x.to_video()
-        })
+        .map(|x| x.into())
         .collect();
     playlist.append(&mut links_page);
 
@@ -83,9 +85,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         let mut links_page: Vec<Video> = page
             .items
             .into_iter()
-            .map(|x| {
-                x.to_video()
-            })
+            .map(|x| x.into())
             .collect();
         playlist.append(&mut links_page);
     }

@@ -1481,6 +1481,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "youtube"
+version = "0.1.0"
+dependencies = [
+ "reqwest",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "ytsync"
 version = "0.1.0"
 dependencies = [
@@ -1493,4 +1502,5 @@ dependencies = [
  "toml",
  "tracing",
  "tracing-subscriber",
+ "youtube",
 ]
