@@ -1,5 +1,5 @@
-pub mod request;
 pub mod config;
+pub mod request;
 
 use youtube::playlist::YoutubePlaylistItem;
 
