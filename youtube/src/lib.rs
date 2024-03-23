@@ -9,6 +9,7 @@ const YT_API_URL: &str = "https://youtube.googleapis.com/youtube/v3";
 #[derive(Debug)]
 pub enum ClientError {
     NotAuthenticated,
+    QuotaExceeded,
 }
 
 /**
